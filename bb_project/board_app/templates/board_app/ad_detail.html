@@ -1,0 +1,19 @@
+{% extends 'board_app/index.html' %}
+
+{% block title %}
+Ad Details
+{% endblock title %}
+
+{% block content %}
+<h1>Ad Details</h1>
+<hr>
+    <ul>
+                <p> 
+                Category: {{ category }} <br>
+                Author: {{author}} <br>
+                </p>
+                <h4> {{ title }} <br> </h4>
+                {{ text }} <br>
+                {{ upload }} <br>
+    </ul>
+{% endblock content %}

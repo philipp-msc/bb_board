@@ -56,7 +56,7 @@ ROOT_URLCONF = 'bb_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'board_app/templates/bb_project/'),],
+        'DIRS': [os.path.join(BASE_DIR, 'board_app/templates/board_app'),],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

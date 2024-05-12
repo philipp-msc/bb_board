@@ -1,0 +1,28 @@
+{% extends 'board_app/index.html' %}
+
+{% block title %}
+Ads List
+{% endblock title %}
+
+{% block content %}
+        {% if adList %}
+        <h2>Latest Ads:</h2>
+        <hr>
+        <table>
+            <tr>
+                <td>Title</td>
+                <td>Category</td>
+                <td>Author</td>
+            </tr>
+            {% for ad in adList %}
+            <tr>
+                <td> {{ ad.title }} </td>
+                <td> {{ ad.get_category_display }} </td>
+                <td> {{ad.author}} </td>
+            </tr>
+        {% endfor %}
+        </table>
+        {% else %}
+        <h2> Объявлений нет! </h2>
+    {% endif %}
+{% endblock content %}
