@@ -1,1 +1,12 @@
-{% extends 'bb_project/board_app/templates/bb_project/ad_list.html' %}
+{% extends 'bb_project/index.html' %}
+
+{% block content %}
+
+{% for ad in object.list%}
+
+<p>{{ ad.title} }</p>
+
+{% endfor %}
+
+
+{% endblock content %}

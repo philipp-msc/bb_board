@@ -10,3 +10,5 @@ from .models import *
 
 class AdList(ListView):
     model = Ad
+    template_name = 'bb_project/ad_list.html'  # Путь к вашему шаблону ad_list.html
+    context_object_name = 'ads'
