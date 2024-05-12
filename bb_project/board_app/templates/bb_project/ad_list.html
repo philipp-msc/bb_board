@@ -1,12 +1,12 @@
 {% extends 'bb_project/index.html' %}
 
-{% block content %}
+{% block latest_ads %}
 
-{% for ad in object.list%}
-
-<p>{{ ad.title} }</p>
-
-{% endfor %}
-
-
-{% endblock content %}
+    <h2>Latest Ads:</h2>
+    <ul>
+        {% for ad in ads %}
+            <li>{{ ad.title }}</li>
+        {% endfor %}
+    </ul>
+    
+{% endblock latest_ads %}

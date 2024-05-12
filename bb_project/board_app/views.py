@@ -12,3 +12,6 @@ class AdList(ListView):
     model = Ad
     template_name = 'bb_project/ad_list.html'  # Путь к вашему шаблону ad_list.html
     context_object_name = 'ads'
+
+    def get_queryset(self):
+        return Ad.objects.all() 
