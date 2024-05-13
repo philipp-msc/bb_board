@@ -8,21 +8,41 @@ Ads List
         {% if adList %}
         <h2>Latest Ads:</h2>
         <hr>
+        <form action="" method="get">
+            {{ filterset.form.as_p }}
+            <input type="submit" value="Найти" />
+        </form>
+        <hr>
         <table>
             <tr>
                 <td>Title</td>
                 <td>Category</td>
                 <td>Author</td>
+                <td>Date</td>
             </tr>
             {% for ad in adList %}
             <tr>
                 <td> {{ ad.title }} </td>
-                <td> {{ ad.get_category_display }} </td>
+                <td> {{ ad.category }} </td>
                 <td> {{ad.author}} </td>
+                <td> {{ ad.date }} </td>
             </tr>
         {% endfor %}
         </table>
         {% else %}
         <h2> Объявлений нет! </h2>
     {% endif %}
+    {% if page_obj.has_previous %}
+    <a href="?page=1">1</a>
+    {% if page_obj.previous_page_number != 1 %}
+    <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+    {% endif %}
+{% endif %}
+{{ page_obj.number }}
+{% if page_obj.has_next %}
+<a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+{% if paginator.num_pages != page_obj.next_page_number %}
+<a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+{% endif %}
+{% endif %}
 {% endblock content %}

@@ -1,8 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.views.generic import ListView, DetailView, CreateView
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .models import *
+from .filters import AdFilter
+from .forms import AdForm
 
 
 # def index(request):
@@ -12,9 +15,20 @@ class AdList(ListView):
     model = Ad
     template_name = 'board_app/ad_list.html'  # Путь к вашему шаблону ad_list.html
     context_object_name = 'adList'
+    paginate_by = 3
+
+    # def get_queryset(self):
+    #     return Ad.objects.all() 
 
     def get_queryset(self):
-        return Ad.objects.all() 
+        queryset = Ad.objects.all()
+        self.filterset = AdFilter(self.request.GET, queryset)
+        return self.filterset.qs
+    
+    def get_context_data(self, **kwargs):
+       context = super().get_context_data(**kwargs)
+       context['filterset'] = self.filterset
+       return context
     
 
 class AdDetail(DetailView):
@@ -29,9 +43,20 @@ class AdDetail(DetailView):
         context['title'] = self.object.title
         context['text'] = self.object.text
         context['upload'] = self.object.upload
+        context['date'] = self.object.date
         return context
 
 class AdCreate(CreateView):
     model = Ad
+    form_class = AdForm
     template_name = 'board_app/ad_create.html'
-    fields = '__all__'
+
+class AdEdit(UpdateView):
+    form_class = AdForm
+    model = Ad
+    template_name = 'ad_edit.html'
+
+class AdDelete(DeleteView):
+    model = Ad
+    template_name = 'board_app/ad_delete.html'
+    success_url = reverse_lazy('ad_list')
