@@ -37,10 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     'board_app',
     'django_filters',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.yandex',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -50,6 +57,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+     'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'bb_project.urls'
@@ -102,6 +111,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -128,3 +141,35 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
+
+LOGIN_REDIRECT_URL = "/"
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'sf.mailbox'
+EMAIL_HOST_PASSWORD = 'testpasswordfortestmail'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+DEFAULT_FROM_EMAIL = 'sf.mailbox@yandex.ru'
+
+# SOCIALACCOUNT_PROVIDERS = {
+#     'yandex': {
+
+#         'APP': {
+#             'client_id': 'cc93290b6a7043648f4c84bc3d4533d7',
+#             'secret': '4ed91f04db044a0f8a9fb61c94e4b7a5',
+#             'key': ''
+#         }
+#     }
+# }

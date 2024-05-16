@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .models import *
@@ -46,17 +48,20 @@ class AdDetail(DetailView):
         context['date'] = self.object.date
         return context
 
-class AdCreate(CreateView):
+class AdCreate(LoginRequiredMixin, CreateView):
     model = Ad
     form_class = AdForm
     template_name = 'board_app/ad_create.html'
+    raise_exception = True
 
-class AdEdit(UpdateView):
+class AdEdit(LoginRequiredMixin, UpdateView):
     form_class = AdForm
     model = Ad
     template_name = 'ad_edit.html'
+    raise_exception = True
 
-class AdDelete(DeleteView):
+class AdDelete(LoginRequiredMixin, DeleteView):
     model = Ad
     template_name = 'board_app/ad_delete.html'
     success_url = reverse_lazy('ad_list')
+    raise_exception = True
