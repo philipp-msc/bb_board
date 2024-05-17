@@ -149,19 +149,23 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+# ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+ACCOUNT_FORMS = {"signup": "accounts.forms.CustomSignupForm"}
+
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
 EMAIL_HOST_USER = 'sf.mailbox'
-EMAIL_HOST_PASSWORD = '***'
+EMAIL_HOST_PASSWORD = 'testpasswordfortestmail'
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
 DEFAULT_FROM_EMAIL = 'sf.mailbox@yandex.ru'
+
+SERVER_EMAIL = 'sf.mailbox@yandex.ru'
 
 # SOCIALACCOUNT_PROVIDERS = {
 #     'yandex': {

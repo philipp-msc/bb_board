@@ -1,17 +1,19 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .models import *
 from .filters import AdFilter
-from .forms import AdForm
+from .forms import AdForm, ResponseForm
 
 
-# def index(request):
-#     return render(request, 'index.html')
+
 
 class AdList(ListView):
     model = Ad
@@ -19,8 +21,6 @@ class AdList(ListView):
     context_object_name = 'adList'
     paginate_by = 3
 
-    # def get_queryset(self):
-    #     return Ad.objects.all() 
 
     def get_queryset(self):
         queryset = Ad.objects.all()
@@ -40,13 +40,15 @@ class AdDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['category'] = self.object.category
+        context['category'] = self.object.get_category_display()        
         context['author'] = self.object.author
         context['title'] = self.object.title
         context['text'] = self.object.text
         context['upload'] = self.object.upload
         context['date'] = self.object.date
+        context['form'] = ResponseForm() 
         return context
+       
 
 class AdCreate(LoginRequiredMixin, CreateView):
     model = Ad
@@ -65,3 +67,58 @@ class AdDelete(LoginRequiredMixin, DeleteView):
     template_name = 'board_app/ad_delete.html'
     success_url = reverse_lazy('ad_list')
     raise_exception = True
+
+@login_required
+def add_response_to_ad(request, pk):
+    ad = get_object_or_404(Ad, pk=pk)
+    if request.method == 'POST':
+        form = ResponseForm(request.POST)
+        if form.is_valid():
+            response = form.save(commit=False)
+            response.ad = ad
+            response.author = request.user
+            response.save()
+
+            send_mail(
+                subject='Новый отклик на ваше объявление',
+                message=f'Пользователь {request.user.username} оставил отклик на ваше объявление "{ad.title}".',
+                from_email=None,  
+                recipient_list=[ad.author.email],
+            )
+            return redirect('ad_detail', pk=pk)
+    else:
+        form = ResponseForm()
+    return render(request, 'board_app/add_response_to_ad.html', {'form': form, 'ad': ad})
+
+class UserAdsListView(ListView):
+    model = Ad
+    template_name = 'board_app/user_ads.html'
+    context_object_name = 'user_ads'
+    paginate_by = 10
+
+    def get_queryset(self):
+        user = User.objects.get(pk=self.kwargs['pk'])
+        return Ad.objects.filter(author=user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user_profile'] = User.objects.get(pk=self.kwargs['pk'])
+        return context
+
+def delete_response(request, pk, response_pk):
+    response = get_object_or_404(Response, pk=response_pk)
+    if request.method == 'POST':
+        response.delete()
+    return redirect('ad_detail', pk=pk)
+
+def accept_response(request, pk, response_pk):
+    response = get_object_or_404(Response, pk=response_pk)
+
+    if request.user != response.ad.author:
+        return redirect('ad_detail', pk=pk)
+    
+    if request.method == 'POST':
+        response.accepted = True
+        response.save()
+        
+    return redirect('ad_detail', pk=pk)

@@ -41,6 +41,10 @@ class Ad(models.Model):
     
     def get_absolute_url(self):
         return reverse('ad_detail', args=[str(self.id)])
+    
+    def responses(self):
+        return self.response_set.all()
+    
 
 
 class Response(models.Model):

@@ -7,15 +7,61 @@ Ad Details
 {% block content %}
 <h1>Ad Details</h1>
 <hr>
-    <ul>
-                <p> 
-                Category: {{ category }} <br>
-                Author: {{ author }} <br>
-                Date: {{ date }}
-                </p>
-                <h4> {{ title }} <br> </h4>
-                {{ text }} <br>
-                {{ upload }} <br>
+<ul>
+    <p>
+        Category: {{ adDetail.get_category_display }} <br>
+        Author: {{ adDetail.author.username }} <br>
+        Date: {{ adDetail.date }}
+    </p>
+    <h4>{{ adDetail.title }}<br></h4>
+    {{ adDetail.text|linebreaks }}<br>
+    {% if adDetail.upload %}
+        <a href="{{ adDetail.upload.url }}">Download attachment</a><br>
+    {% endif %}
+</ul>
 
+<h2>Отклики</h2>
+        <!-- <ul>
+            {% for response in adDetail.response_set.all %}
+                <li>{{ response.text }} - {{ response.author.username }}
+                    {% if user == adDetail.author %}
+                        <form method="post" action="{% url 'delete_response' adDetail.pk response.pk %}">
+                            {% csrf_token %}
+                            <button type="submit">Delete</button>
+                        </form>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul> -->
+
+{% if user.is_authenticated %}
+    <h3>Оставить отклик</h3>
+    <form method="post" action="{% url 'add_response_to_ad' adDetail.pk %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Отправить отклик</button>
+    </form>
+
+    <h3>Принять отклик</h3>
+    <ul>
+        {% for response in adDetail.response_set.all %}
+            <li>{{ response.text }} - {{ response.author.username }}
+                <form method="post" action="{% url 'delete_response' adDetail.pk response.pk %}">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
+                {% if user == adDetail.author %}
+                    <form method="post" action="{% url 'accept_response' adDetail.pk response.pk %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="accepted" value="True">
+                        <button type="submit">Принять отклик</button>
+                    </form>
+                {% endif %}
+            </li>
+        {% endfor %}
     </ul>
+{% else %}
+    <p>Вы должны <a href="{% url 'account_login' %}">войти в систему</a>, чтобы оставить отклик.</p>
+{% endif %}
+
 {% endblock content %}

@@ -1,0 +1,18 @@
+{% extends 'board_app/index.html' %}
+
+{% block title %}
+User Ads - {{ user_profile.username }}
+{% endblock title %}
+
+{% block content %}
+  <h1>{{ user_profile.username }} Ads</h1>
+  <ul>
+    {% for ad in user_ads %}
+      <li>
+        <a href="{% url 'ad_detail' pk=ad.pk %}">{{ ad.title }}</a> - {{ ad.date }} ({{ ad.response_set.count }} responses)
+      </li>
+    {% empty %}
+      <li>No ads found.</li>
+    {% endfor %}
+  </ul>
+{% endblock content %}

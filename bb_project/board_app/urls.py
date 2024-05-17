@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path
+from . import views
 
 from board_app.views import *
 
@@ -10,4 +11,9 @@ urlpatterns = [
     path('create/', AdCreate.as_view(), name='ad_create'),
     path('ad/<int:pk>/edit', AdEdit.as_view(), name='ad_edit'),
     path('ad/<int:pk>/delete', AdDelete.as_view(), name='ad_delete'),
+    path('ad/<int:pk>/add_response/', add_response_to_ad, name='add_response_to_ad'),
+    path('user/<int:pk>/', UserAdsListView.as_view(), name='user_ads'),
+    path('ad/<int:pk>/delete_response/<int:response_pk>/', views.delete_response, name='delete_response'),
+    path('ad/<int:pk>/accept_response/<int:response_pk>/', views.accept_response, name='accept_response'),
+
 ]
