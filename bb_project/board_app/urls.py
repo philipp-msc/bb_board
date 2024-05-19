@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 from board_app.views import *
 
@@ -15,5 +17,4 @@ urlpatterns = [
     path('user/<int:pk>/', UserAdsListView.as_view(), name='user_ads'),
     path('ad/<int:pk>/delete_response/<int:response_pk>/', views.delete_response, name='delete_response'),
     path('ad/<int:pk>/accept_response/<int:response_pk>/', views.accept_response, name='accept_response'),
-
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

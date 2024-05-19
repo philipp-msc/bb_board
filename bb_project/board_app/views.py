@@ -10,7 +10,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 
 from .models import *
 from .filters import AdFilter
-from .forms import AdForm, ResponseForm
+from .forms import AdForm, ResponseForm, ResponseFilterForm
 
 
 
@@ -90,19 +90,27 @@ def add_response_to_ad(request, pk):
         form = ResponseForm()
     return render(request, 'board_app/add_response_to_ad.html', {'form': form, 'ad': ad})
 
-class UserAdsListView(ListView):
+class UserAdsListView(LoginRequiredMixin, ListView):
     model = Ad
     template_name = 'board_app/user_ads.html'
     context_object_name = 'user_ads'
     paginate_by = 10
 
     def get_queryset(self):
-        user = User.objects.get(pk=self.kwargs['pk'])
-        return Ad.objects.filter(author=user)
+        user = self.request.user
+        queryset = Ad.objects.filter(author=user)
+        
+
+        ad_filter = self.request.GET.get('ad_filter')
+        if ad_filter:
+            queryset = queryset.filter(pk=ad_filter)
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user_profile'] = User.objects.get(pk=self.kwargs['pk'])
+        context['user_profile'] = self.request.user
+        context['filter_form'] = ResponseFilterForm(self.request.GET)
         return context
 
 def delete_response(request, pk, response_pk):

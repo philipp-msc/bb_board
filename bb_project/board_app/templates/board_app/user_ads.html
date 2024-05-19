@@ -6,6 +6,16 @@ User Ads - {{ user_profile.username }}
 
 {% block content %}
   <h1>{{ user_profile.username }} Ads</h1>
+  <form method="GET" action="">
+    <label for="ad_filter">Filter by Ad:</label>
+    <select name="ad_filter" id="ad_filter">
+      <option value="">All Ads</option>
+      {% for ad in user_ads %}
+        <option value="{{ ad.pk }}">{{ ad.title }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Filter</button>
+  </form>
   <ul>
     {% for ad in user_ads %}
       <li>
